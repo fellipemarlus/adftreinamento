@@ -3,110 +3,11 @@
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
-			"sources": [
-				{
-					"dataset": {
-						"referenceName": "arquivo_vendas",
-						"type": "DatasetReference"
-					},
-					"name": "arquivovendas"
-				}
-			],
-			"sinks": [
-				{
-					"dataset": {
-						"referenceName": "arquivo_vendas",
-						"type": "DatasetReference"
-					},
-					"name": "salvanoblob"
-				}
-			],
-			"transformations": [
-				{
-					"name": "select1"
-				},
-				{
-					"name": "aggregate1"
-				},
-				{
-					"name": "rank1"
-				}
-			],
+			"sources": [],
+			"sinks": [],
+			"transformations": [],
 			"scriptLines": [
-				"source(output(",
-				"          id_venda as string,",
-				"          cod_cliente as string,",
-				"          nom_cliente as string,",
-				"          cod_vendedor as string,",
-				"          nom_vendedor as string,",
-				"          cod_cidade as string,",
-				"          nom_cidade as string,",
-				"          cod_produto as string,",
-				"          Nom_produto as string,",
-				"          cod_marca as string,",
-				"          Nom_marca as string,",
-				"          cod_departamento as string,",
-				"          nom_departamento as string,",
-				"          cod_gerencia as string,",
-				"          nom_gerencia as string,",
-				"          Ano_venda as string,",
-				"          {M�s_venda} as string,",
-				"          Dia_venda as string,",
-				"          dtc_venda as string,",
-				"          qtd_venda as string,",
-				"          val_venda as double,",
-				"          num_nota as string,",
-				"          Latitude as string,",
-				"          Longitude as string",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> arquivovendas",
-				"arquivovendas select(mapColumn(",
-				"          Ano_venda,",
-				"          Mes_venda = {M�s_venda},",
-				"          valor_venda = val_venda",
-				"     ),",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select1",
-				"select1 aggregate(groupBy(Ano_venda,",
-				"          Mes_venda),",
-				"     valor_venda_ano = sum(valor_venda)) ~> aggregate1",
-				"aggregate1 rank(desc(valor_venda_ano, true),",
-				"     asc(Mes_venda, true),",
-				"     output(rank_top_venda as long)) ~> rank1",
-				"rank1 sink(allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     input(",
-				"          id_venda as string,",
-				"          cod_cliente as string,",
-				"          nom_cliente as string,",
-				"          cod_vendedor as string,",
-				"          nom_vendedor as string,",
-				"          cod_cidade as string,",
-				"          nom_cidade as string,",
-				"          cod_produto as string,",
-				"          Nom_produto as string,",
-				"          cod_marca as string,",
-				"          Nom_marca as string,",
-				"          cod_departamento as string,",
-				"          nom_departamento as string,",
-				"          cod_gerencia as string,",
-				"          nom_gerencia as string,",
-				"          Ano_venda as string,",
-				"          {M�s_venda} as string,",
-				"          Dia_venda as string,",
-				"          dtc_venda as string,",
-				"          qtd_venda as string,",
-				"          val_venda as string,",
-				"          num_nota as string,",
-				"          Latitude as string,",
-				"          Longitude as string",
-				"     ),",
-				"     partitionFileNames:['valor_mes_ano_venda.csv'],",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> salvanoblob"
+				""
 			]
 		}
 	}
