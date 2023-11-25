@@ -1,0 +1,29 @@
+{
+	"name": "dataflow_union",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "dataset_blob",
+						"type": "DatasetReference"
+					},
+					"name": "vendasano"
+				}
+			],
+			"sinks": [],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          Ano_venda as short,",
+				"          valor_venda_ano as double",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     wildcardPaths:['/valoranovenda.csv']) ~> vendasano"
+			]
+		}
+	}
+}
