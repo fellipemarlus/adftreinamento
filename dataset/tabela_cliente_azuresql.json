@@ -1,0 +1,26 @@
+{
+	"name": "tabela_cliente_azuresql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "bd_treinamento_azuresql",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "idcliente",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "nomecliente",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "cliente"
+		}
+	}
+}
