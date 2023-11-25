@@ -97,7 +97,7 @@
 				"          Latitude as string,",
 				"          Longitude as string",
 				"     ),",
-				"     partitionFileNames:['/fontes/clientes.csv'],",
+				"     partitionFileNames:['clientes.csv'],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
 				"     partitionBy('hash', 1)) ~> salvanoblob"
