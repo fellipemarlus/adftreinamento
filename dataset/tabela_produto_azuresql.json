@@ -1,0 +1,30 @@
+{
+	"name": "tabela_produto_azuresql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "bd_treinamento_azuresql",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "idproduto",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "nomeproduto",
+				"type": "varchar"
+			},
+			{
+				"name": "nomecategoria",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "produto"
+		}
+	}
+}
