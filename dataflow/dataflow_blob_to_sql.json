@@ -1,5 +1,5 @@
 {
-	"name": "dataflow_vendas",
+	"name": "dataflow_blob_to_sql",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
@@ -9,20 +9,36 @@
 						"referenceName": "arquivo_vendas",
 						"type": "DatasetReference"
 					},
-					"name": "vendas"
+					"name": "arquivoVendas"
 				}
 			],
 			"sinks": [
 				{
-					"name": "salvanoblob"
+					"dataset": {
+						"referenceName": "dataset_blob",
+						"type": "DatasetReference"
+					},
+					"name": "salvaTabelaCliente"
 				}
 			],
 			"transformations": [
 				{
-					"name": "select1"
+					"name": "selectCliente"
 				},
 				{
 					"name": "cast1"
+				},
+				{
+					"name": "selectCidade"
+				},
+				{
+					"name": "cast2"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "agregacaoValoresDistintos"
 				}
 			],
 			"scriptLines": [
@@ -54,23 +70,72 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> vendas",
-				"vendas select(mapColumn(",
+				"     ignoreNoFilesFound: false) ~> arquivoVendas",
+				"arquivoVendas select(mapColumn(",
 				"          idcliente = cod_cliente,",
 				"          nomecliente = nom_cliente",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select1",
-				"select1 cast(output(",
+				"     skipDuplicateMapOutputs: true) ~> selectCliente",
+				"selectCliente cast(output(",
 				"          idcliente as integer",
 				"     ),",
 				"     errors: true) ~> cast1",
-				"cast1 sink(allowSchemaDrift: true,",
+				"arquivoVendas select(mapColumn(",
+				"          idcidade = cod_cidade,",
+				"          nomecidade = nom_cidade",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectCidade",
+				"selectCidade cast(output(",
+				"          idcidade as integer",
+				"     ),",
+				"     errors: true) ~> cast2",
+				"arquivoVendas select(mapColumn(",
+				"          id_venda,",
+				"          cod_cliente,",
+				"          nom_cliente,",
+				"          cod_vendedor,",
+				"          nom_vendedor,",
+				"          cod_cidade,",
+				"          nom_cidade,",
+				"          cod_produto,",
+				"          Nom_produto,",
+				"          cod_marca,",
+				"          Nom_marca,",
+				"          cod_departamento,",
+				"          nom_departamento,",
+				"          cod_gerencia,",
+				"          nom_gerencia,",
+				"          Ano_venda,",
+				"          Mes_venda,",
+				"          Dia_venda,",
+				"          dtc_venda,",
+				"          qtd_venda,",
+				"          val_venda,",
+				"          num_nota,",
+				"          Latitude,",
+				"          Longitude",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"cast1 aggregate(groupBy(idcliente,",
+				"          nomecliente),",
+				"     idclienteagg = first(idcliente)) ~> agregacaoValoresDistintos",
+				"agregacaoValoresDistintos sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     partitionFileNames:['clientes.csv'],",
+				"     input(",
+				"          idcliente as string,",
+				"          nomecliente as string",
+				"     ),",
+				"     partitionFileNames:['testeinsercaoclient.csv'],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> salvanoblob"
+				"     mapColumn(",
+				"          idcliente,",
+				"          nomecliente",
+				"     ),",
+				"     partitionBy('hash', 1)) ~> salvaTabelaCliente"
 			]
 		}
 	}
