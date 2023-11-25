@@ -1,0 +1,109 @@
+{
+	"name": "atividade join",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "arquivo_vendas",
+						"type": "DatasetReference"
+					},
+					"name": "fontevendas"
+				},
+				{
+					"dataset": {
+						"referenceName": "dataset_blob",
+						"type": "DatasetReference"
+					},
+					"name": "fontecargos"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "dataset_blob",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "join1"
+				},
+				{
+					"name": "resultjoinfinal"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          id_venda as integer,",
+				"          cod_cliente as integer,",
+				"          nom_cliente as string,",
+				"          cod_vendedor as string,",
+				"          nom_vendedor as string,",
+				"          cod_cidade as string,",
+				"          nom_cidade as string,",
+				"          cod_produto as string,",
+				"          Nom_produto as string,",
+				"          cod_marca as string,",
+				"          Nom_marca as string,",
+				"          cod_departamento as string,",
+				"          nom_departamento as string,",
+				"          cod_gerencia as string,",
+				"          nom_gerencia as string,",
+				"          Ano_venda as string,",
+				"          Mes_venda as string,",
+				"          Dia_venda as string,",
+				"          dtc_venda as string,",
+				"          qtd_venda as string,",
+				"          val_venda as string,",
+				"          num_nota as string,",
+				"          Latitude as string,",
+				"          Longitude as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> fontevendas",
+				"source(output(",
+				"          idcliente as short,",
+				"          idcargo as short,",
+				"          nomecargo as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     wildcardPaths:['cliente_cargo.csv']) ~> fontecargos",
+				"fontevendas, fontecargos join(cod_cliente == idcliente,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"join1 select(mapColumn(",
+				"          Nome_cliente = nom_cliente,",
+				"          Cargo_cliente = nomecargo,",
+				"          Nome_produto = Nom_produto,",
+				"          Ano_venda,",
+				"          Mes_venda,",
+				"          Dia_venda,",
+				"          dtc_venda,",
+				"          qtd_venda,",
+				"          val_venda",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> resultjoinfinal",
+				"resultjoinfinal sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          idcliente as string,",
+				"          nomecliente as string",
+				"     ),",
+				"     partitionFileNames:['vendasClienteCargo.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
+			]
+		}
+	}
+}
