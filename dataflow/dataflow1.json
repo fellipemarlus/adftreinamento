@@ -27,6 +27,9 @@
 				},
 				{
 					"name": "aggregate1"
+				},
+				{
+					"name": "rank1"
 				}
 			],
 			"scriptLines": [
@@ -61,13 +64,18 @@
 				"     ignoreNoFilesFound: false) ~> arquivovendas",
 				"arquivovendas select(mapColumn(",
 				"          Ano_venda,",
+				"          {M�s_venda},",
 				"          valor_venda = val_venda",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select1",
-				"select1 aggregate(groupBy(Ano_venda),",
+				"select1 aggregate(groupBy(Ano_venda,",
+				"          {M�s_venda}),",
 				"     valor_venda_ano = sum(valor_venda)) ~> aggregate1",
-				"aggregate1 sink(allowSchemaDrift: true,",
+				"aggregate1 rank(desc(valor_venda_ano, true),",
+				"     asc({M�s_venda}, true),",
+				"     output(rank_top_venda as long)) ~> rank1",
+				"rank1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          id_venda as string,",
@@ -95,7 +103,7 @@
 				"          Latitude as string,",
 				"          Longitude as string",
 				"     ),",
-				"     partitionFileNames:['valoranovenda.csv'],",
+				"     partitionFileNames:['valor_mes_ano_venda.csv'],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
 				"     partitionBy('hash', 1)) ~> salvanoblob"
