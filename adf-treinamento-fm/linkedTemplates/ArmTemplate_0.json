@@ -1,0 +1,449 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Nome do Data Factory",
+			"defaultValue": "adf-treinamento-fm"
+		},
+		"ls_azureblobstorage_connectionString": {
+			"type": "secureString",
+			"metadata": "Cadeia de caracteres segura para 'connectionString' de 'ls_azureblobstorage'"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_azureblobstorage')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Linked Service conexçao com o azure blobo storage",
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('ls_azureblobstorage_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/arquivo_vendas')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_azureblobstorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "vendas.csv",
+						"container": "fontes"
+					},
+					"columnDelimiter": ",",
+					"encodingName": "WINDOWS-1252",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "id_venda",
+						"type": "String"
+					},
+					{
+						"name": "cod_cliente",
+						"type": "String"
+					},
+					{
+						"name": "nom_cliente",
+						"type": "String"
+					},
+					{
+						"name": "cod_vendedor",
+						"type": "String"
+					},
+					{
+						"name": "nom_vendedor",
+						"type": "String"
+					},
+					{
+						"name": "cod_cidade",
+						"type": "String"
+					},
+					{
+						"name": "nom_cidade",
+						"type": "String"
+					},
+					{
+						"name": "cod_produto",
+						"type": "String"
+					},
+					{
+						"name": "Nom_produto",
+						"type": "String"
+					},
+					{
+						"name": "cod_marca",
+						"type": "String"
+					},
+					{
+						"name": "Nom_marca",
+						"type": "String"
+					},
+					{
+						"name": "cod_departamento",
+						"type": "String"
+					},
+					{
+						"name": "nom_departamento",
+						"type": "String"
+					},
+					{
+						"name": "cod_gerencia",
+						"type": "String"
+					},
+					{
+						"name": "nom_gerencia",
+						"type": "String"
+					},
+					{
+						"name": "Ano_venda",
+						"type": "String"
+					},
+					{
+						"name": "M�s_venda",
+						"type": "String"
+					},
+					{
+						"name": "Dia_venda",
+						"type": "String"
+					},
+					{
+						"name": "dtc_venda",
+						"type": "String"
+					},
+					{
+						"name": "qtd_venda",
+						"type": "String"
+					},
+					{
+						"name": "val_venda",
+						"type": "String"
+					},
+					{
+						"name": "num_nota",
+						"type": "String"
+					},
+					{
+						"name": "Latitude",
+						"type": "String"
+					},
+					{
+						"name": "Longitude",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_azureblobstorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/arquivo_vendas_modificado')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_azureblobstorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "val_vendas.csv",
+						"container": "fontes"
+					},
+					"columnDelimiter": ",",
+					"encodingName": "WINDOWS-1252",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "id_venda",
+						"type": "String"
+					},
+					{
+						"name": "cod_cliente",
+						"type": "String"
+					},
+					{
+						"name": "nom_cliente",
+						"type": "String"
+					},
+					{
+						"name": "cod_vendedor",
+						"type": "String"
+					},
+					{
+						"name": "nom_vendedor",
+						"type": "String"
+					},
+					{
+						"name": "cod_cidade",
+						"type": "String"
+					},
+					{
+						"name": "nom_cidade",
+						"type": "String"
+					},
+					{
+						"name": "cod_produto",
+						"type": "String"
+					},
+					{
+						"name": "Nom_produto",
+						"type": "String"
+					},
+					{
+						"name": "cod_marca",
+						"type": "String"
+					},
+					{
+						"name": "Nom_marca",
+						"type": "String"
+					},
+					{
+						"name": "cod_departamento",
+						"type": "String"
+					},
+					{
+						"name": "nom_departamento",
+						"type": "String"
+					},
+					{
+						"name": "cod_gerencia",
+						"type": "String"
+					},
+					{
+						"name": "nom_gerencia",
+						"type": "String"
+					},
+					{
+						"name": "Ano_venda",
+						"type": "String"
+					},
+					{
+						"name": "M�s_venda",
+						"type": "String"
+					},
+					{
+						"name": "Dia_venda",
+						"type": "String"
+					},
+					{
+						"name": "dtc_venda",
+						"type": "String"
+					},
+					{
+						"name": "qtd_venda",
+						"type": "String"
+					},
+					{
+						"name": "val_venda",
+						"type": "String"
+					},
+					{
+						"name": "num_nota",
+						"type": "String"
+					},
+					{
+						"name": "Latitude",
+						"type": "String"
+					},
+					{
+						"name": "Longitude",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_azureblobstorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline_copydata')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copiar Dados NF",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "id_venda",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "id_venda",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Ano_venda",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Ano_venda",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Mês_venda",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Mês_venda",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Dia_venda",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Dia_venda",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "dtc_venda",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "dtc_venda",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "qtd_venda",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "qtd_venda",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "val_venda",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "val_venda",
+											"type": "String",
+											"physicalType": "String"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "arquivo_vendas",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "arquivo_vendas_modificado",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/arquivo_vendas')]",
+				"[concat(variables('factoryId'), '/datasets/arquivo_vendas_modificado')]"
+			]
+		}
+	]
+}
