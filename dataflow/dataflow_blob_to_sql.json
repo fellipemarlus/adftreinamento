@@ -53,6 +53,10 @@
 				},
 				{
 					"name": "aggValoresDistintosCidade"
+				},
+				{
+					"name": "padronizandoNomeCidade",
+					"description": "Algumas linhas com nome SSA em vez de Salvador"
 				}
 			],
 			"scriptLines": [
@@ -133,13 +137,14 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> selectCidade",
-				"selectCidade cast(output(",
+				"padronizandoNomeCidade cast(output(",
 				"          idcidade as integer",
 				"     ),",
 				"     errors: true) ~> cast2",
 				"cast2 aggregate(groupBy(idcidade,",
 				"          nomecidade),",
 				"     idcidadeagg = first(idcidade)) ~> aggValoresDistintosCidade",
+				"selectCidade derive(nomecidade = iif(trim(nomecidade) == 'SSA', 'Salvador', nomecidade)) ~> padronizandoNomeCidade",
 				"agregacaoValoresDistintos sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
