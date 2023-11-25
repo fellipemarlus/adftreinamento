@@ -5,6 +5,10 @@
 		"typeProperties": {
 			"sources": [
 				{
+					"dataset": {
+						"referenceName": "arquivo_vendas",
+						"type": "DatasetReference"
+					},
 					"name": "vendas"
 				}
 			],
@@ -39,7 +43,7 @@
 				"          cod_gerencia as string,",
 				"          nom_gerencia as string,",
 				"          Ano_venda as string,",
-				"          {M�s_venda} as string,",
+				"          Mes_venda as string,",
 				"          Dia_venda as string,",
 				"          dtc_venda as string,",
 				"          qtd_venda as string,",
@@ -49,7 +53,8 @@
 				"          Longitude as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
-				"     validateSchema: false) ~> vendas",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> vendas",
 				"vendas select(mapColumn(",
 				"          idcliente = cod_cliente,",
 				"          nomecliente = nom_cliente",
