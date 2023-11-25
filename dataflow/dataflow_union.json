@@ -10,10 +10,32 @@
 						"type": "DatasetReference"
 					},
 					"name": "vendasano"
+				},
+				{
+					"dataset": {
+						"referenceName": "dataset_blob",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
 				}
 			],
-			"sinks": [],
-			"transformations": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "dataset_blob",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "select1"
+				},
+				{
+					"name": "union1"
+				}
+			],
 			"scriptLines": [
 				"source(output(",
 				"          Ano_venda as short,",
@@ -22,7 +44,34 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
-				"     wildcardPaths:['/valoranovenda.csv']) ~> vendasano"
+				"     wildcardPaths:['/valoranovenda.csv']) ~> vendasano",
+				"source(output(",
+				"          Ano_venda as short,",
+				"          Mes_venda as short,",
+				"          vendas_ano as double,",
+				"          rank_top_vendas as short",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     wildcardPaths:['valor_mes_ano_venda.csv']) ~> source1",
+				"source1 select(mapColumn(",
+				"          Ano_venda,",
+				"          valor_venda_ano = vendas_ano",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"vendasano, select1 union(byName: true)~> union1",
+				"union1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          idcliente as string,",
+				"          nomecliente as string",
+				"     ),",
+				"     partitionFileNames:['exemplo_union.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
 			]
 		}
 	}
