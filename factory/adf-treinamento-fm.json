@@ -1,0 +1,9 @@
+{
+	"name": "adf-treinamento-fm",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "ddd1d3fa-030b-49b2-8941-3c732b9f6227",
+		"tenantId": "7935699f-a65b-4e47-bccf-ec33daa22bc6"
+	}
+}
