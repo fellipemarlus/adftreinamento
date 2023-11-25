@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "vendas_mod.csv",
+				"fileName": "val_vendas.csv",
 				"container": "fontes"
 			},
 			"columnDelimiter": ",",
