@@ -1,0 +1,26 @@
+{
+	"name": "tabela_cidade_azuresql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "bd_treinamento_azuresql",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "idcidade",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "nomecidade",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "cidade"
+		}
+	}
+}
