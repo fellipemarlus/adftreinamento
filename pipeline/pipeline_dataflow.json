@@ -17,7 +17,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "media_vendas_dia",
+						"referenceName": "valor_venda_ano",
 						"type": "DataFlowReference"
 					},
 					"compute": {
