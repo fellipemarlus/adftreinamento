@@ -9,14 +9,21 @@
 						"referenceName": "arquivo_vendas",
 						"type": "DatasetReference"
 					},
-					"name": "arquivoVendas"
+					"name": "arquivoVendas1"
 				},
 				{
 					"dataset": {
 						"referenceName": "arquivo_vendas",
 						"type": "DatasetReference"
 					},
-					"name": "source1"
+					"name": "arquivoVendas2"
+				},
+				{
+					"dataset": {
+						"referenceName": "arquivo_vendas",
+						"type": "DatasetReference"
+					},
+					"name": "arquivoVendas3"
 				}
 			],
 			"sinks": [
@@ -33,6 +40,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "salvaBlobCidade"
+				},
+				{
+					"dataset": {
+						"referenceName": "dataset_blob",
+						"type": "DatasetReference"
+					},
+					"name": "salvaBlobProduto"
 				}
 			],
 			"transformations": [
@@ -57,6 +71,15 @@
 				{
 					"name": "padronizandoNomeCidade",
 					"description": "Algumas linhas com nome SSA em vez de Salvador"
+				},
+				{
+					"name": "selectProduto"
+				},
+				{
+					"name": "cast3"
+				},
+				{
+					"name": "aggValoresDistintosProdutos"
 				}
 			],
 			"scriptLines": [
@@ -88,7 +111,7 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> arquivoVendas",
+				"     ignoreNoFilesFound: false) ~> arquivoVendas1",
 				"source(output(",
 				"          id_venda as string,",
 				"          cod_cliente as string,",
@@ -117,8 +140,37 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> source1",
-				"arquivoVendas select(mapColumn(",
+				"     ignoreNoFilesFound: false) ~> arquivoVendas2",
+				"source(output(",
+				"          id_venda as string,",
+				"          cod_cliente as string,",
+				"          nom_cliente as string,",
+				"          cod_vendedor as string,",
+				"          nom_vendedor as string,",
+				"          cod_cidade as string,",
+				"          nom_cidade as string,",
+				"          cod_produto as string,",
+				"          Nom_produto as string,",
+				"          cod_marca as string,",
+				"          Nom_marca as string,",
+				"          cod_departamento as string,",
+				"          nom_departamento as string,",
+				"          cod_gerencia as string,",
+				"          nom_gerencia as string,",
+				"          Ano_venda as string,",
+				"          Mes_venda as string,",
+				"          Dia_venda as string,",
+				"          dtc_venda as string,",
+				"          qtd_venda as string,",
+				"          val_venda as string,",
+				"          num_nota as string,",
+				"          Latitude as string,",
+				"          Longitude as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> arquivoVendas3",
+				"arquivoVendas1 select(mapColumn(",
 				"          idcliente = cod_cliente,",
 				"          nomecliente = nom_cliente",
 				"     ),",
@@ -131,7 +183,7 @@
 				"cast1 aggregate(groupBy(idcliente,",
 				"          nomecliente),",
 				"     idclienteagg = first(idcliente)) ~> agregacaoValoresDistintos",
-				"source1 select(mapColumn(",
+				"arquivoVendas2 select(mapColumn(",
 				"          idcidade = cod_cidade,",
 				"          nomecidade = nom_cidade",
 				"     ),",
@@ -145,6 +197,21 @@
 				"          nomecidade),",
 				"     idcidadeagg = first(idcidade)) ~> aggValoresDistintosCidade",
 				"selectCidade derive(nomecidade = iif(trim(nomecidade) == 'SSA', 'Salvador', nomecidade)) ~> padronizandoNomeCidade",
+				"arquivoVendas3 select(mapColumn(",
+				"          idproduto = cod_produto,",
+				"          nomeproduto = Nom_produto,",
+				"          nomecategoria = nom_departamento",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectProduto",
+				"selectProduto cast(output(",
+				"          idproduto as integer",
+				"     ),",
+				"     errors: true) ~> cast3",
+				"cast3 aggregate(groupBy(idproduto,",
+				"          nomeproduto,",
+				"          nomecategoria),",
+				"     idprodutoagg = first(idproduto)) ~> aggValoresDistintosProdutos",
 				"agregacaoValoresDistintos sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
@@ -164,7 +231,17 @@
 				"     partitionFileNames:['cidades_vendas.csv'],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> salvaBlobCidade"
+				"     partitionBy('hash', 1)) ~> salvaBlobCidade",
+				"aggValoresDistintosProdutos sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          idcliente as string,",
+				"          nomecliente as string",
+				"     ),",
+				"     partitionFileNames:['produtos_vendas.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> salvaBlobProduto"
 			]
 		}
 	}
