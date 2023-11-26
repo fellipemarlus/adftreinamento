@@ -8,6 +8,9 @@
 		"ls_azureblobstorage_connectionString": {
 			"value": ""
 		},
+		"bd_treinamento_azuresql_connectionString": {
+			"value": ""
+		},
 		"containerUri": {
 			"value": ""
 		},

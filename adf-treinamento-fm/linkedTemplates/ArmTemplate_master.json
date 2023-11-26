@@ -11,6 +11,10 @@
 			"type": "secureString",
 			"metadata": "Cadeia de caracteres segura para 'connectionString' de 'ls_azureblobstorage'"
 		},
+		"bd_treinamento_azuresql_connectionString": {
+			"type": "secureString",
+			"metadata": "Cadeia de caracteres segura para 'connectionString' de 'bd_treinamento_azuresql'"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI para a conta de armazenamento contendo os modelos do ARM vinculados"
@@ -40,6 +44,9 @@
 					},
 					"ls_azureblobstorage_connectionString": {
 						"value": "[parameters('ls_azureblobstorage_connectionString')]"
+					},
+					"bd_treinamento_azuresql_connectionString": {
+						"value": "[parameters('bd_treinamento_azuresql_connectionString')]"
 					}
 				}
 			},
