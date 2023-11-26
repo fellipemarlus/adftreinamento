@@ -328,18 +328,107 @@
 						"storeSettings": {
 							"type": "AzureBlobStorageReadSettings",
 							"recursive": true,
-							"wildcardFileName": "*",
+							"wildcardFileName": "venda_vendas.csv",
 							"enablePartitionDiscovery": false
 						},
 						"formatSettings": {
 							"type": "DelimitedTextReadSettings"
 						}
 					},
-					"enableStaging": false
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "upsert",
+						"upsertSettings": {
+							"useTempDB": true,
+							"keys": [
+								"idvenda"
+							]
+						},
+						"sqlWriterUseTableLock": false,
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "idvenda"
+								},
+								"sink": {
+									"name": "idvenda",
+									"type": "int",
+									"precision": 10
+								}
+							},
+							{
+								"source": {
+									"name": "idcliente",
+									"type": "String"
+								},
+								"sink": {
+									"name": "idcliente",
+									"type": "int",
+									"precision": 10
+								}
+							},
+							{
+								"source": {
+									"name": "idcidade"
+								},
+								"sink": {
+									"name": "idcidade",
+									"type": "int",
+									"precision": 10
+								}
+							},
+							{
+								"source": {
+									"name": "idproduto"
+								},
+								"sink": {
+									"name": "idproduto",
+									"type": "int",
+									"precision": 10
+								}
+							},
+							{
+								"source": {
+									"name": "quantidade"
+								},
+								"sink": {
+									"name": "quantidade",
+									"type": "int",
+									"precision": 10
+								}
+							},
+							{
+								"source": {
+									"name": "valor_total"
+								},
+								"sink": {
+									"name": "valor_total",
+									"type": "float",
+									"precision": 15
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
 				},
 				"inputs": [
 					{
 						"referenceName": "dataset_blob",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "tabela_venda_azuresql",
 						"type": "DatasetReference"
 					}
 				]
