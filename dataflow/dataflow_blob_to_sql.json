@@ -24,6 +24,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "arquivoVendas3"
+				},
+				{
+					"dataset": {
+						"referenceName": "arquivo_vendas",
+						"type": "DatasetReference"
+					},
+					"name": "arquivoVendas4"
 				}
 			],
 			"sinks": [
@@ -47,6 +54,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "salvaBlobProduto"
+				},
+				{
+					"dataset": {
+						"referenceName": "dataset_blob",
+						"type": "DatasetReference"
+					},
+					"name": "salvaBlobVenda"
 				}
 			],
 			"transformations": [
@@ -80,6 +94,15 @@
 				},
 				{
 					"name": "aggValoresDistintosProdutos"
+				},
+				{
+					"name": "selectVendas"
+				},
+				{
+					"name": "cast4"
+				},
+				{
+					"name": "aggValoresDistintosVendas"
 				}
 			],
 			"scriptLines": [
@@ -170,6 +193,35 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> arquivoVendas3",
+				"source(output(",
+				"          id_venda as string,",
+				"          cod_cliente as string,",
+				"          nom_cliente as string,",
+				"          cod_vendedor as string,",
+				"          nom_vendedor as string,",
+				"          cod_cidade as string,",
+				"          nom_cidade as string,",
+				"          cod_produto as string,",
+				"          Nom_produto as string,",
+				"          cod_marca as string,",
+				"          Nom_marca as string,",
+				"          cod_departamento as string,",
+				"          nom_departamento as string,",
+				"          cod_gerencia as string,",
+				"          nom_gerencia as string,",
+				"          Ano_venda as string,",
+				"          Mes_venda as string,",
+				"          Dia_venda as string,",
+				"          dtc_venda as string,",
+				"          qtd_venda as string,",
+				"          val_venda as string,",
+				"          num_nota as string,",
+				"          Latitude as string,",
+				"          Longitude as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> arquivoVendas4",
 				"arquivoVendas1 select(mapColumn(",
 				"          idcliente = cod_cliente,",
 				"          nomecliente = nom_cliente",
@@ -212,6 +264,32 @@
 				"          nomeproduto,",
 				"          nomecategoria),",
 				"     idprodutoagg = first(idproduto)) ~> aggValoresDistintosProdutos",
+				"arquivoVendas4 select(mapColumn(",
+				"          idvenda = id_venda,",
+				"          idcliente = cod_cliente,",
+				"          idcidade = cod_cidade,",
+				"          idproduto = cod_produto,",
+				"          quantidade = qtd_venda,",
+				"          valor_total = val_venda",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectVendas",
+				"selectVendas cast(output(",
+				"          idvenda as integer,",
+				"          idcliente as integer,",
+				"          idcidade as integer,",
+				"          idproduto as integer,",
+				"          quantidade as integer,",
+				"          valor_total as float",
+				"     ),",
+				"     errors: true) ~> cast4",
+				"cast4 aggregate(groupBy(idvenda,",
+				"          idcliente,",
+				"          idcidade,",
+				"          idproduto,",
+				"          quantidade,",
+				"          valor_total),",
+				"     idvendaagg = first(idvenda)) ~> aggValoresDistintosVendas",
 				"agregacaoValoresDistintos sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
@@ -241,7 +319,17 @@
 				"     partitionFileNames:['produtos_vendas.csv'],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> salvaBlobProduto"
+				"     partitionBy('hash', 1)) ~> salvaBlobProduto",
+				"aggValoresDistintosVendas sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          idcliente as string,",
+				"          nomecliente as string",
+				"     ),",
+				"     partitionFileNames:['venda_vendas.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> salvaBlobVenda"
 			]
 		}
 	}
